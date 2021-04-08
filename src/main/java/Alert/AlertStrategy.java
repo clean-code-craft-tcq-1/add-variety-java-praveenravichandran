@@ -15,18 +15,8 @@ public enum AlertStrategy {
 		@Override
 		public void sendAlert(BreachType breachType) {
 			String recepient = "a.b@c.com";
-			switch (breachType) {
-			case TOO_LOW:
-				System.out.printf("To: %s\n", recepient);
-				System.out.println("Hi, the temperature is too low\n");
-				break;
-			case TOO_HIGH:
-				System.out.printf("To: %s\n", recepient);
-				System.out.println("Hi, the temperature is too high\n");
-				break;
-			case NORMAL:
-				break;
-			}
+			BreachType breach = BreachType.valueOf(breachType.toString());
+			breach.printMailContent(recepient);
 		}
 	};
 
