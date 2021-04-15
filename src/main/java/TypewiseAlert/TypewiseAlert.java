@@ -1,28 +1,32 @@
 package TypewiseAlert;
 
-import Alert.AlertStrategy;
+import java.io.IOException;
+
+import BatteryCharacter.BatteryCharacter;
 import Breach.BreachType;
-import CoolingTypes.CoolingTypeStrategy;
+import alert.AlertStrategy;
+import coolingtype.CoolingTypeStrategy;
+import utils.HelperUtil;
 
 public class TypewiseAlert {
-	public class BatteryCharacter {
-		public CoolingTypeStrategy coolingType;
-		public String brand;
 
-		public BatteryCharacter(CoolingTypeStrategy coolingType, String brand) {
-			this.coolingType = coolingType;
-			this.brand = brand;
-		}
+	private TypewiseAlert() {
 	}
 
-	public static void checkAndAlert(AlertStrategy alertTarget, BatteryCharacter batteryChar, double temperatureInC) {
+	public static BreachType checkAndAlert(String alertType, BatteryCharacter batteryChar, double temperatureInC)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 		BreachType breachType = classifyTemperatureBreach(batteryChar.coolingType, temperatureInC);
-		AlertStrategy alertStrategy = AlertStrategy.valueOf(alertTarget.toString());
+		String className = HelperUtil.getValueFromProperty(alertType, "Alert");
+		AlertStrategy alertStrategy = (AlertStrategy) Class.forName(className).newInstance();
 		alertStrategy.sendAlert(breachType);
+		return breachType;
 	}
 
-	public static BreachType classifyTemperatureBreach(CoolingTypeStrategy coolingType, double temperatureInC) {
-		CoolingTypeStrategy temperatureBreachStrategy = CoolingTypeStrategy.valueOf(coolingType.toString());
+	public static BreachType classifyTemperatureBreach(String coolingType, double temperatureInC)
+			throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
+		String className = HelperUtil.getValueFromProperty(coolingType, "CoolingType");
+
+		CoolingTypeStrategy temperatureBreachStrategy = (CoolingTypeStrategy) Class.forName(className).newInstance();
 		return temperatureBreachStrategy.checkTemperatureBreach(temperatureInC);
 	}
 
